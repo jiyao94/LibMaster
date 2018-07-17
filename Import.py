@@ -166,7 +166,7 @@ def WriteExcel(fileName, iList, oList, pList):
 
 	#write input ports list
 	ws.append([StyleMerge(ws, 'INPUTS', 'A3:C3')])
-	ws.append(StyleRange(ws, ['INDEX', 'POINT DESCRIPTION', 'TAG NAME'], True, colors.GREEN))
+	ws.append(StyleRange(ws, ['INDEX', 'POINT DESCRIPTION', 'TAG NAME'], True, colors.YELLOW))
 	for pin in iList:
 		ws.append([pin.index, pin.desc])
 	StyleBorder(ws, 3, len(iList) + 4, 3)
@@ -175,10 +175,10 @@ def WriteExcel(fileName, iList, oList, pList):
 
 	#write output ports list
 	ws.append([StyleMerge(ws, 'OUTPUTS', 'A{0}:D{0}'.format(len(iList) + 6))])
-	ws.append(StyleRange(ws, ['INDEX', 'FUNCTION BLOCK DESCRIPTION', 'TAG NAME', 'DESCRIPTION'], True, colors.GREEN))
+	ws.append(StyleRange(ws, ['INDEX', 'FUNCTION BLOCK DESCRIPTION', 'TAG NAME', 'DESCRIPTION'], True, colors.YELLOW))
 	for pin in oList:
 		if not pin.inPointDir:
-			ws.append(StyleRange(ws, [pin.index, pin.desc], False, colors.YELLOW))
+			ws.append(StyleRange(ws, [pin.index, pin.desc], False, colors.GREEN))
 		else:
 			ws.append([pin.index, pin.desc])
 	StyleBorder(ws, len(iList) + 6, len(iList + oList) + 7, 4)
@@ -190,7 +190,7 @@ def WriteExcel(fileName, iList, oList, pList):
 	ws.append(StyleRange(ws, ['INDEX', 'POINT DESCRIPTION', 'TAG NAME', 'DESCRIPTION', 'PARA', 'VALUE'], True, colors.YELLOW))
 	for pin in pList:
 		if not pin.inPointDir:
-			ws.append(StyleRange(ws, [pin.index, pin.desc], False, colors.YELLOW))
+			ws.append(StyleRange(ws, [pin.index, pin.desc], False, colors.GREEN))
 		else:
 			ws.append([pin.index, pin.desc])
 	StyleBorder(ws, len(iList + oList) + 9, len(iList + oList + pList) + 10, 6)
