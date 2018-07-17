@@ -1,0 +1,208 @@
+import os, json, pyforms, traceback
+from pyforms import BaseWidget
+from pyforms.controls import ControlFile
+from pyforms.controls import ControlDir
+from pyforms.controls import ControlButton
+from pyforms.controls import ControlTextArea
+from pyforms.controls import ControlCombo
+from pyforms.controls import ControlText
+from pyforms.controls import ControlList
+from Import import Import
+from Config import Config
+from Combine import Combine
+
+class OptimumS(BaseWidget):
+	def __init__(self):
+		super(OptimumS, self).__init__('OptimumS')
+		#Import controls
+		self._openImportFile	= ControlFile('Choose library file:	')
+		self._openImportDir		= ControlDir('Or, choose directory:	')
+		self._importButton		= ControlButton('Import')
+		self._importTextArea	= ControlTextArea()
+		#Configure controls
+		self._configCombo		= ControlCombo('Library type')
+		self._configNameText	= ControlText('Library name')
+		self._configPageText	= ControlText('Start page')
+		self._configList		= ControlList('Library List',
+			add_function=self.__buttonAction_Add, remove_function=self.__buttonAction_Del)
+		self._configLoadButton	= ControlButton('Load')
+		self._configAddButton	= ControlButton('Add')
+		self._configDelButton	= ControlButton('Delete')
+		self._configClearButton	= ControlButton('Clear')
+		self._configSaveButton	= ControlButton('Save')
+		self._configGenButton	= ControlButton('Generate')
+		self._configTextArea	= ControlTextArea()
+		#Combine controls
+		self._openDBFile		= ControlFile('Choose the database file:	')
+		self._openArgFile		= ControlFile('Choose the argument file:	')
+		self._combineButton		= ControlButton('Combine')
+		self._combineTextArea	= ControlTextArea()
+
+		#setup all controls
+		self.formset = [{
+			'	1. Import	':[
+				'',
+				('','_openImportFile',''),
+				('','_openImportDir',''),
+				(' ','_importButton',' '),
+				'',
+				('','_importTextArea',''),
+				''],
+			'	2. Configure	':[
+				'',
+				('','_configCombo','_configNameText','_configPageText',''),
+				('','_configList',''),
+				('','_configAddButton','','_configDelButton','','_configClearButton',''),
+				('','_configLoadButton','','_configSaveButton','','_configGenButton',''),
+				'',
+				('','_configTextArea',''),
+				''],
+			'	3. Combine	':[
+				'',
+				('','_openDBFile',''),
+				('','_openArgFile',''),
+				(' ','_combineButton',' '),
+				'',
+				('','_combineTextArea',''),
+				'']}]
+
+		#Button Actions
+		self._importButton.value = self.__buttonAction_Import
+		self._configLoadButton.value = self.__buttonAction_Load
+		self._configAddButton.value = self.__buttonAction_Add
+		self._configDelButton.value = self.__buttonAction_Del
+		self._configClearButton.value = self.__buttonAction_Clear
+		self._configSaveButton.value = self.__buttonAction_Save
+		self._configGenButton.value = self.__buttonAction_Gen
+		self._combineButton.value = self.__buttonAction_Combine
+
+		#set all text area to read only
+		self._importTextArea.readonly = True
+		self._configTextArea.readonly = True
+		self._combineTextArea.readonly = True
+
+		#Combo box lists correct library files in './Library' directory
+		self._configCombo += 'Select library file'
+		if not os.path.exists('Library'):
+			os.mkdir('Library')
+		else:
+			file_lst = os.listdir('Library')
+			for file in file_lst:
+				if file[-4:] == '.txt' and (file[:-4] + '.xlsx') in file_lst:
+					self._configCombo += file[:-4]
+				else:
+					pass
+
+		#set configuration list property
+		headers = []
+		headers.append(' ' * 20 + 'Library Type' + ' ' * 20)
+		headers.append(' ' * 20 + 'File Name' + ' ' * 20)
+		headers.append('Starting Page')
+		self._configList.horizontal_headers = headers
+		self._configList.select_entire_row = True
+		self._configList.readonly = True
+
+	def __buttonAction_Import(self):
+		try:
+			#import a file, using main import function from 'Import.py'
+			if self._openImportFile.value != '':
+				addedFiles = Import([self._openImportFile.value], self._importTextArea.__add__)
+				self._importTextArea.__add__('Import finish. Libraries are exported under \'./Library\' directory.')
+				for add_file in addedFiles:
+					self._configCombo += addedFiles[0][:-4]
+			#import a directory, find valid files in directory before calling Import
+			elif self._openImportDir.value != '':
+				files = []
+				dirs = os.listdir(self._openImportDir.value)
+				for file in dirs:
+					if file[-4:] == '.txt':
+						files.append(self._openImportDir.value + '/' + file)
+					else:
+						pass
+				addedFiles = Import(files, self._importTextArea.__add__)
+				self._importTextArea.__add__('Import finish. Libraries are exported under \'./Library\' directory.')
+				for add_file in addedFiles:
+					self._configCombo += add_file[:-4]
+			#no file selected
+			else:
+				self._importTextArea.__add__('No file or directory selected.')
+		except Exception as err:
+			self._importTextArea.__add__('Error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
+	def __buttonAction_Load(self):
+		try:
+			self._loadConfigFile = ControlFile()
+			self._loadConfigFile.click()
+			if self._loadConfigFile.value != '':
+				with open(self._loadConfigFile.value, 'r') as f:
+					self._configList.load_form(json.load(f), None)
+			else:
+				raise Exception('No file selected.')
+			self._configTextArea.__add__('List loaded from ' + self._loadConfigFile.value)
+		except Exception as err:
+			self._configTextArea.__add__('\'Load\' error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
+	def __buttonAction_Add(self):
+		try:
+			lst = [self._configCombo.text, self._configNameText.value, self._configPageText.value]
+			self._configList.__add__(lst)
+			self._configList.resizecolumns = False
+		except Exception as err:
+			self._configTextArea.__add__('\'Add\' error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
+	def __buttonAction_Del(self):
+		try:
+			self._configList.__sub__(self._configList.selected_row_index)
+		except Exception as err:
+			self._configTextArea.__add__('\'Delete\' error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
+	def __buttonAction_Clear(self):
+		try:
+			self._configList.clear()
+		except Exception as err:
+			self._configTextArea.__add__('\'Clear\' error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
+	def __buttonAction_Save(self):
+		try:
+			self._saveConfigFile = ControlFile(use_save_dialog=True)
+			self._saveConfigFile.click()
+			if self._saveConfigFile.value != '':
+				with open(self._saveConfigFile.value, 'w') as f:
+					json.dump(self._configList.save_form({}, None), f)
+			else:
+				raise Exception('File not specified.')
+			self._configTextArea.__add__('List saved to ' + self._saveConfigFile.value)
+		except Exception as err:
+			self._configTextArea.__add__('\'Save\' error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
+	def __buttonAction_Gen(self):
+		try:
+			table = self._configList.value
+			for i in range(len(table)):
+				table[i][0] += '.txt'
+			table.insert(0, ['Library Type', 'File Name', 'Starting Page'])
+			self._saveArgFile = ControlFile(use_save_dialog=True)
+			self._saveArgFile.click()
+			Config(table, self._saveArgFile.value)
+			self._configTextArea.__add__('Arguments file is generated.')
+		except Exception as err:
+			self._configTextArea.__add__('\'Generate\' error: ' + repr(err))
+			self._configTextArea.__add__(traceback.format_exc())
+
+	def __buttonAction_Combine(self):
+		try:
+			self._saveDPUFile = ControlFile(use_save_dialog=True)
+			self._saveDPUFile.click()
+			Combine(self._openDBFile.value, self._saveDPUFile.value, self._openArgFile.value)
+			self._combineTextArea.__add__('New DPU file is generated.')
+		except Exception as err:
+			self._combineTextArea.__add__('Error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
+pyforms.start_app(OptimumS)
