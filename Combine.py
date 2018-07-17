@@ -362,7 +362,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 
 	#copy point configs of lib to Final, between BEGIN_AX and END_AX (exclusive)
 	for i in range(len(lib_lst)):
-		with open(lib_lst[i].type, 'r', encoding='utf-16') as f_lib:
+		with open('Library/' + lib_lst[i].type, 'r', encoding='utf-16') as f_lib:
 			line_lib = f_lib.readline()
 			while line_lib.find('[POINT_DIR INFO]') < 0:
 				line_lib = f_lib.readline()
@@ -389,7 +389,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 
 	#copy point configs of lib to Final, between BEGIN_DX and END_DX (exclusive)
 	for i in range(len(lib_lst)):
-		with open(lib_lst[i].type, 'r', encoding='utf-16') as f_lib:
+		with open('Library/' + lib_lst[i].type, 'r', encoding='utf-16') as f_lib:
 			line_lib = f_lib.readline()
 			while line_lib.find('[POINT_DIR INFO]') < 0:
 				line_lib = f_lib.readline()
