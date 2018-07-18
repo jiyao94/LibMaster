@@ -15,8 +15,11 @@ class OptimumS(BaseWidget):
 	def __init__(self):
 		super(OptimumS, self).__init__('OptimumS')
 		#Import controls
-		self._openImportFile	= ControlFile('Choose library file:	')
-		self._openImportDir		= ControlDir('Or, choose directory:	')
+		self._openImportFile	= None
+		self._openImportDir		= None
+		self._importPathText	= ControlText()
+		self._openFileButton	= ControlButton('Open a file')
+		self._openDirButton		= ControlButton('Open a directory')
 		self._importButton		= ControlButton('Import')
 		self._importTextArea	= ControlTextArea()
 		#Configure controls
@@ -42,8 +45,8 @@ class OptimumS(BaseWidget):
 		self.formset = [{
 			'	1. Import	':[
 				'',
-				('','_openImportFile',''),
-				('','_openImportDir',''),
+				('','_importPathText',''),
+				('','_openFileButton','', '_openDirButton',''),
 				(' ','_importButton',' '),
 				'',
 				('','_importTextArea',''),
@@ -67,6 +70,8 @@ class OptimumS(BaseWidget):
 				'']}]
 
 		#Button Actions
+		self._openFileButton.value = self.__buttonAction_OpenFile
+		self._openDirButton.value = self.__buttonAction_OpenDir
 		self._importButton.value = self.__buttonAction_Import
 		self._configLoadButton.value = self.__buttonAction_Load
 		self._configAddButton.value = self.__buttonAction_Add
@@ -102,16 +107,34 @@ class OptimumS(BaseWidget):
 		self._configList.select_entire_row = True
 		self._configList.readonly = True
 
+	def __buttonAction_OpenFile(self):
+		try:
+			self._openImportFile = ControlFile('Choose library file:')
+			self._openImportFile.click()
+			self._importPathText.value = self._openImportFile.value
+		except Exception as err:
+			self._importTextArea.__add__('Open file error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
+	def __buttonAction_OpenDir(self):
+		try:
+			self._openImportDir	= ControlDir('Choose directory:')
+			self._openImportDir.click()
+			self._importPathText.value = self._openImportDir.value
+		except Exception as err:
+			self._importTextArea.__add__('Open file error: ' + repr(err))
+			self._combineTextArea.__add__(traceback.format_exc())
+
 	def __buttonAction_Import(self):
 		try:
 			#import a file, using main import function from 'Import.py'
-			if self._openImportFile.value != '':
+			if self._openImportFile is not None and self._openImportFile.value == self._importPathText.value:
 				addedFiles = Import([self._openImportFile.value], self._importTextArea.__add__)
 				self._importTextArea.__add__('Import finish. Libraries are exported under \'./Library\' directory.')
 				for add_file in addedFiles:
 					self._configCombo += addedFiles[0][:-4]
 			#import a directory, find valid files in directory before calling Import
-			elif self._openImportDir.value != '':
+			elif self._openImportDir is not None and self._openImportDir.value == self._importPathText.value:
 				files = []
 				dirs = os.listdir(self._openImportDir.value)
 				for file in dirs:
