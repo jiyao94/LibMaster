@@ -1,7 +1,10 @@
 ##############################################################################
-#AUTHOR: Yao Ji (jiyao94@126.com)
-#DATE: 2018/6/29
-#DESCRIPTION: 
+'''
+AUTHOR:			Yao Ji (jiyao94@126.com)
+CREATED DATE:	2018/6/29
+LAST UPDATE:	2018/7/18
+DESCRIPTION:
+'''
 ##############################################################################
 
 import os, json, readline, glob, traceback

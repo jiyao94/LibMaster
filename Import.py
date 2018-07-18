@@ -1,13 +1,16 @@
-##############################################################################
-#AUTHOR: Yao Ji (jiyao94@126.com)
-#DATE: 2018/6/22
-#DESCRIPTION: This tool is used to read the I/O ports and the function blocks
-#of the DPU configuration file and export to an Excel file. All the external
-#ports and parametric function blocks should follow standard pin description.
-#The input can be a config file or the directory contains configs. The output
-#file will be under './Library' directory. This tool will also copy the config
-#files to this directory.
-##############################################################################
+##########################################################################################
+'''
+AUTHOR:			Yao Ji (jiyao94@126.com)
+CREATED DATE:	2018/6/22
+LAST UPDATE:	2018/7/18
+DESCRIPTION:	This tool is used to read the I/O ports and the function blocks of the DPU
+				configuration file and export to an Excel file. All the external ports and
+				parametric function blocks should follow standard description form. The
+				input can be a library file or a directory contains libraries. The output
+				file will be exported to './Library' directory. This tool will also copy 
+				the config files to this directory.
+'''
+##########################################################################################
 
 import os, glob, readline, shutil, traceback
 from collections import namedtuple

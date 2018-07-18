@@ -1,8 +1,14 @@
-##############################################################################
-#AUTHOR: Yao Ji (jiyao94@126.com)
-#DATE: 2018/6/28
-#DESCRIPTION: 
-##############################################################################
+########################################################################################
+'''
+AUTHOR:			Yao Ji (jiyao94@126.com)
+CREATED DATE:	2018/6/28
+LAST UPDATE:	2018/7/18
+DESCRIPTION: 	This tool is used to generate Arguments file accroding to configfile.vIt
+				checks whether 'Config.xlsx' exists in the current directory. If not, it
+				generates one, otherwise it generates 'Arguments.xlsx' according to it.
+				User can specifie library, loop name, and start page in the config file.
+'''
+########################################################################################
 
 import os, traceback
 from openpyxl.workbook import Workbook
@@ -68,7 +74,7 @@ if __name__ == '__main__':
 		if not os.path.exists('Config.xlsx'):
 			wb = Workbook()
 			ws = wb.active
-			ws.append(['Library Type', 'File Name', 'Starting Page'])
+			ws.append(['Library', 'Loop Name', 'Start Page'])
 			ws.column_dimensions['A'].width = 50.0
 			ws.column_dimensions['B'].width = 50.0
 			wb.save('Config.xlsx')
@@ -78,7 +84,7 @@ if __name__ == '__main__':
 			ws = wb.active
 			table = list(ws.rows)
 
-			wb = Config(table)
+			Config(table)
 
 			input('Finish!\nArguments file is generated.')
 	except Exception as err:
