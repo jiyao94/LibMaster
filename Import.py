@@ -59,7 +59,7 @@ def RemovePath(fileName):
 
 #read through the file and store all the I/Os and FBs in lists
 def ReadFile(fd):
-	iList, oList, pList = [], [], []							#create i/o list to store inputs and outputs
+	iList, oList, pList, pageList = [], [], [], []				#create lists to store inputs, outputs and function blocks
 	it = iter(fd.readlines())
 	pageBlock = False											#create 'page' flag, to read blocks inside pages
 	pointInfo = False											#create 'point' flag, to read point config for blocks
@@ -67,6 +67,7 @@ def ReadFile(fd):
 		if line.find('Page,') > -1:								#identify 'Page' block
 			pageBlock = True									#set 'page' flag
 			pageNo = line.split(', ')[1].split(':')[0]			#store page number
+			pageList.append(pageNo)
 		elif line.find('PageEnd') > -1:							#'Page' block ends
 			pageBlock = False									#clear flag
 		elif line.find('[POINT_DIR INFO]') > -1:
@@ -127,7 +128,7 @@ def ReadFile(fd):
 				pass
 		else:
 			pass
-	return iList, oList, pList
+	return iList, oList, pList, pageList
 
 #helper function for WriteExcel()
 def StyleMerge(ws, val, range):
@@ -154,7 +155,7 @@ def StyleBorder(ws, start_row, end_row, columns):
 
 #write the I/O list into Excel
 #openpyxl is used to write .xlsx format
-def WriteExcel(fileName, iList, oList, pList):
+def WriteExcel(fileName, iList, oList, pList, pageList):
 	wb = Workbook()
 	ws = wb.active
 
@@ -203,6 +204,11 @@ def WriteExcel(fileName, iList, oList, pList):
 	ws.column_dimensions['C'].width = 15.0
 	ws.column_dimensions['D'].width = 30.0
 
+	#store page information in seperate sheet
+	ws = wb.create_sheet('Info')
+	ws.append(['Page count', len(pageList)])
+	ws.append(['Page list'] + pageList)
+
 	#file is outputed under './Library' directory
 	wb.save('Library/' + RemovePath(fileName).replace('.txt', '.xlsx'))
 
@@ -213,7 +219,7 @@ def Import(dirs, OutputFunc = print):
 		#start reading file
 		fd = open(fileName, encoding='utf-16')
 		OutputFunc(RemovePath(fileName) + ':\n\tReading... ')
-		iList, oList, pList = ReadFile(fd)
+		iList, oList, pList, pageList = ReadFile(fd)
 		fd.close()
 
 		#Option: sort the list
@@ -223,7 +229,7 @@ def Import(dirs, OutputFunc = print):
 
 		#write the lists into Excel
 		OutputFunc('\tWriting... ')
-		WriteExcel(RemovePath(fileName), iList, oList, pList)
+		WriteExcel(RemovePath(fileName), iList, oList, pList, pageList)
 		OutputFunc('\tDone!')
 
 		#copy file to library

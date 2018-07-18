@@ -15,6 +15,7 @@ from pyforms.controls import ControlTextArea
 from pyforms.controls import ControlCombo
 from pyforms.controls import ControlText
 from pyforms.controls import ControlList
+from openpyxl import load_workbook
 from Import import Import
 from Config import Config
 from Combine import Combine
@@ -31,10 +32,10 @@ class OptimumS(BaseWidget):
 		self._importButton		= ControlButton('Import')
 		self._importTextArea	= ControlTextArea()
 		#Configure controls
-		self._configCombo		= ControlCombo('Library type')
-		self._configNameText	= ControlText('Library name')
+		self._configCombo		= ControlCombo('Library')
+		self._configNameText	= ControlText('Loop name')
 		self._configPageText	= ControlText('Start page')
-		self._configList		= ControlList('Library List',
+		self._configList		= ControlList('Application Plan',
 			add_function=self.__buttonAction_Add, remove_function=self.__buttonAction_Del)
 		self._configLoadButton	= ControlButton('Load')
 		self._configAddButton	= ControlButton('Add')
@@ -61,7 +62,7 @@ class OptimumS(BaseWidget):
 				''],
 			'	2. Configure	':[
 				'',
-				('','_configCombo','_configNameText','_configPageText',''),
+				('','_configCombo','','_configNameText','','_configPageText',''),
 				('','_configList',''),
 				('','_configAddButton','','_configDelButton','','_configClearButton',''),
 				('','_configLoadButton','','_configSaveButton','','_configGenButton',''),
@@ -95,7 +96,7 @@ class OptimumS(BaseWidget):
 		self._combineTextArea.readonly = True
 
 		#Combo box lists correct library files in './Library' directory
-		self._configCombo += 'Select library file'
+		self._configCombo += 'Select library'
 		if not os.path.exists('Library'):
 			os.mkdir('Library')
 		else:
@@ -108,9 +109,9 @@ class OptimumS(BaseWidget):
 
 		#set configuration list property
 		headers = []
-		headers.append(' ' * 20 + 'Library Type' + ' ' * 20)
-		headers.append(' ' * 20 + 'File Name' + ' ' * 20)
-		headers.append('Starting Page')
+		headers.append(' ' * 20 + 'Library' + ' ' * 20)
+		headers.append(' ' * 20 + 'Loop Name' + ' ' * 20)
+		headers.append('Start Page')
 		self._configList.horizontal_headers = headers
 		self._configList.select_entire_row = True
 		self._configList.readonly = True
@@ -220,7 +221,7 @@ class OptimumS(BaseWidget):
 			table = self._configList.value
 			for i in range(len(table)):
 				table[i][0] += '.txt'
-			table.insert(0, ['Library Type', 'File Name', 'Starting Page'])
+			table.insert(0, ['Library', 'Loop Name', 'Start Page'])
 			self._saveArgFile = ControlFile(use_save_dialog=True)
 			self._saveArgFile.click()
 			Config(table, self._saveArgFile.value)

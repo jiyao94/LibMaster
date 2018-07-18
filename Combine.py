@@ -16,29 +16,27 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 	fileName = "para_def.txt"
 	jstr = {}
 	with open(fileName, 'r') as f:
-		line = f.readline()[:-1]
+		line = f.readline()
 		while True:
 			line.replace('\t', ' ')
+			line = line[:-1] if line[-1] == '\n' else line
 			if len(line) < 1:
 				pass
-			elif line[0] not in ['P', 'I']:
-				fb = line
-				jstr[fb] = {'para':{}, 'input':{}}
-			elif line[0] == 'P':
+			elif len(line) > 3 and line[0] == 'P' and line[1:3].isdigit():
 				num = int(line[1:3])
 				name = line.split(' ')[-1]
 				jstr[fb]['para'][name] = num
-			elif line[0] == 'I':
+			elif len(line) > 3 and line[0] == 'I' and line[1:3].isdigit():
 				num = int(line[1:3])
 				name = line.split(' ')[-1]
 				jstr[fb]['input'][name] = num
 			else:
-				pass
+				fb = line
+				jstr[fb] = {'para':{}, 'input':{}}
+
 			line = f.readline()
 			if line == '':
 				break
-			else:
-				line = line[:-1]
 
 	#open Argument file
 	wb = load_workbook(argFileName)
