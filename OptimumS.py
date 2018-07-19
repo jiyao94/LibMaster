@@ -14,6 +14,7 @@ from pyforms.controls import ControlButton
 from pyforms.controls import ControlTextArea
 from pyforms.controls import ControlCombo
 from pyforms.controls import ControlText
+from pyforms.controls import ControlNumber
 from pyforms.controls import ControlList
 from openpyxl import load_workbook
 from Import import Import
@@ -34,7 +35,8 @@ class OptimumS(BaseWidget):
 		#Configure controls
 		self._configCombo		= ControlCombo('Library')
 		self._configNameText	= ControlText('Loop name')
-		self._configPageText	= ControlText('Start page')
+		self._configPageNumber	= ControlNumber('Start page', default=1, min=1, max=20000)
+		self._configDict		= {}
 		self._configList		= ControlList('Application Plan',
 			add_function=self.__buttonAction_Add, remove_function=self.__buttonAction_Del)
 		self._configLoadButton	= ControlButton('Load')
@@ -62,7 +64,7 @@ class OptimumS(BaseWidget):
 				''],
 			'	2. Configure	':[
 				'',
-				('','_configCombo','','_configNameText','','_configPageText',''),
+				('','_configCombo','','_configNameText','','_configPageNumber',''),
 				('','_configList',''),
 				('','_configAddButton','','_configDelButton','','_configClearButton',''),
 				('','_configLoadButton','','_configSaveButton','','_configGenButton',''),
@@ -109,9 +111,10 @@ class OptimumS(BaseWidget):
 
 		#set configuration list property
 		headers = []
-		headers.append(' ' * 20 + 'Library' + ' ' * 20)
-		headers.append(' ' * 20 + 'Loop Name' + ' ' * 20)
-		headers.append('Start Page')
+		headers.append(' ' * 10 + 'Library' + ' ' * 10)
+		headers.append(' ' * 10 + 'Loop Name' + ' ' * 10)
+		headers.append(' Start Page ')
+		headers.append(' End Page ')
 		self._configList.horizontal_headers = headers
 		self._configList.select_entire_row = True
 		self._configList.readonly = True
@@ -165,13 +168,39 @@ class OptimumS(BaseWidget):
 			self._importTextArea.__add__('Error: ' + repr(err))
 			self._importTextArea.__add__(traceback.format_exc())
 
+	def __helper_Add2Dict(self, lst):
+		combo, name, pageNum = lst[0], lst[1], int(lst[2])
+		if name in self._configDict.values():
+			raise Exception('Loop name conflict.')
+		else:
+			pass
+		wb = load_workbook('./Library/' + combo + '.xlsx')
+		ws = wb['Info']
+		for row in list(ws.rows):
+			if row[0].value == 'Page count':
+				pageCount = row[1].value
+			else:
+				pass
+		for i in range(pageCount):
+			if pageNum + i in self._configDict:
+				raise Exception('Page conflict.')
+			else:
+				pass
+		lst[3] = pageNum + pageCount - 1
+		for i in range(pageCount):
+			self._configDict[pageNum + i] = name
+
 	def __buttonAction_Load(self):
 		try:
 			self._loadConfigFile = ControlFile()
 			self._loadConfigFile.click()
 			if self._loadConfigFile.value != '':
 				with open(self._loadConfigFile.value, 'r') as f:
-					self._configList.load_form(json.load(f), None)
+					jstr = json.load(f)
+					table = jstr['value']
+					for row in table:
+						self.__helper_Add2Dict(row)
+					self._configList.load_form(jstr, None)
 			else:
 				raise Exception('No file selected.')
 			self._configTextArea.__add__('List loaded from ' + self._loadConfigFile.value)
@@ -181,7 +210,9 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_Add(self):
 		try:
-			lst = [self._configCombo.text, self._configNameText.value, self._configPageText.value]
+			nameText = '__' + self._configCombo.text if self._configNameText.value == '' else self._configNameText.value
+			lst = [self._configCombo.text, nameText, self._configPageNumber.value, 0]
+			self.__helper_Add2Dict(lst)
 			self._configList.__add__(lst)
 			self._configList.resizecolumns = False
 		except Exception as err:
@@ -190,6 +221,8 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_Del(self):
 		try:
+			for i in range(int(self._configList.get_currentrow_value()[2]), int(self._configList.get_currentrow_value()[3]) + 1):
+				del self._configDict[i]
 			self._configList.__sub__(self._configList.selected_row_index)
 		except Exception as err:
 			self._configTextArea.__add__('\'Delete\' error: ' + repr(err))
@@ -197,6 +230,7 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_Clear(self):
 		try:
+			self._configDict.clear()
 			self._configList.clear()
 		except Exception as err:
 			self._configTextArea.__add__('\'Clear\' error: ' + repr(err))
@@ -221,7 +255,7 @@ class OptimumS(BaseWidget):
 			table = self._configList.value
 			for i in range(len(table)):
 				table[i][0] += '.txt'
-			table.insert(0, ['Library', 'Loop Name', 'Start Page'])
+			table.insert(0, ['Library', 'Loop Name', 'Start Page', 'End Page'])
 			self._saveArgFile = ControlFile(use_save_dialog=True)
 			self._saveArgFile.click()
 			Config(table, self._saveArgFile.value)
