@@ -160,7 +160,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 					next(iterRow)
 					row = next(iterRow)
 					while row[0].value is not None:
-						index, tag = row[0].value, row[2].value
+						index, tag, desc = row[0].value, row[2].value, row[3].value
 						#page outputs appended to output list
 						if tag in ax_db:
 							lib_lst[i].output_lst.append(Outputs(index, tag, ax_db[tag], [0, 0]))
@@ -168,7 +168,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 							lib_lst[i].output_lst.append(Outputs(index, tag, dx_db[tag], [0, 0]))
 						#net outputs appended to module list
 						else:
-							lib_lst[i].module_lst.append(Modules(index, [0, 0], tag, row[3].value, []))
+							lib_lst[i].module_lst.append(Modules(index, [0, 0], tag, desc, []))
 						row = next(iterRow)
 				elif row[0].value == 'PARAMETERS':
 					next(iterRow)
@@ -190,8 +190,8 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 	for i in range(len(lib_lst)):
 		f.write('\n')
 
-		#first scan the lib to record page lists
-		#and fill index locations for input and module lists
+		#first scan the lib to record page lists and
+		#fill index locations for input and module lists
 		pageList = []
 		with open('Library/' + lib_lst[i].type, 'r', encoding='utf-16') as f_lib:
 			line_lib = f_lib.readline()
@@ -231,6 +231,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 
 		#second scan to make changes to the lib
 		pageCounter = 0
+		input_lst_copy = lib_lst[i].input_lst[:]
 		module_lst_copy = lib_lst[i].module_lst[:]
 
 		with open('Library/' + lib_lst[i].type, 'r', encoding='utf-16') as f_lib:
@@ -345,7 +346,18 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 							else:
 								pass
 				elif line_lib.find('Out=') > -1:
-					pass
+					#change the pin desc to && for input list
+					if line_lib.find('\\') > -1:
+						desc = line_lib.split('\\')[1].split(',')[0]
+						for x in input_lst_copy:
+							if x.index == desc[:5]:
+								line_lib = line_lib.split('\\')[0] + '\\&&' + line_lib.split('\\')[1][line_lib.split('\\')[1].find(','):]
+								input_lst_copy.remove(x)
+								break
+							else:
+								pass
+					else:
+						pass
 				else:
 					pass
 				f.write(line_lib)
