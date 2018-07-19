@@ -88,9 +88,9 @@ def ReadFile(fd):
 				else:
 					break
 			if out_line.find('\\') > -1:						#check whether "Out=" contains description
-				desc = out_line.split(',')[1].split('\\')[1]
+				desc = out_line.split('\\')[1].split(',')[0]
 			elif in_line.find('\\') > -1:						#check whether "In=" contains description
-				desc = in_line.split(',')[1].split('\\')[1]
+				desc = in_line.split('\\')[1].split(',')[0]
 			else:												#otherwise, pin has no description, it is not an external I/O
 				desc = 'NO DESCRIPTIOIN'
 				pass
