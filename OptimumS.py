@@ -259,10 +259,9 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_Del(self):
 		try:
-			currentRow = self._configList.get_currentrow_value()
-			if len(currentRow) < 4:
+			if self._configList.selected_row_index is None:
 				raise Exception('No row selected.')
-			for i in range(int(currentRow[2]), int(currentRow[3]) + 1):
+			for i in range(int(self._configList.get_currentrow_value()[2]), int(self._configList.get_currentrow_value()[3]) + 1):
 				del self._configDict[i]
 			self._configList.__sub__(self._configList.selected_row_index)
 		except Exception as err:
