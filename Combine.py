@@ -2,7 +2,7 @@
 '''
 AUTHOR:			Yao Ji (jiyao94@126.com)
 CREATED DATE:	2018/6/29
-LAST UPDATE:	2018/7/18
+LAST UPDATE:	2018/7/19
 DESCRIPTION:
 '''
 ##############################################################################
@@ -248,9 +248,19 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 					page_lst[1] = str(newPageNum) + ':' + str(newPageNum * pageOrder // pageNum)
 					line_lib = ', '.join(page_lst)
 					pageCounter += 1
+				elif line_lib.find('Description=') > -1:
+					if lib_lst[i].name[:2] != '__':
+						line_lib = '\tDescription=' + lib_lst[i].name + ' ' + line_lib[len('\tDescription='):]
+					else:
+						pass
 				elif line_lib.find('Func, ') > -1:
 					funcName = line_lib.split(', ')[1]
 					blockNum = int(line_lib.split(', ')[2].split(':')[0])
+				elif line_lib.find('Text=') > -1:
+					if lib_lst[i].name[:2] != '__':
+						line_lib = line_lib.replace('LOOPNAME', lib_lst[i].name)
+					else:
+						pass
 				elif line_lib.find('In=') > -1:
 					if line_lib.find('\\') > -1:
 						#add new page number to output list
