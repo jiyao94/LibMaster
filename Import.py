@@ -179,7 +179,7 @@ def WriteExcel(fileName, iList, oList, pList, pageList):
 
 	#write output ports list
 	ws.append([StyleMerge(ws, 'OUTPUTS', 'A{0}:D{0}'.format(len(iList) + 6))])
-	ws.append(StyleRange(ws, ['INDEX', 'FUNCTION BLOCK DESCRIPTION', 'TAG NAME', 'DESCRIPTION'], True, colors.YELLOW))
+	ws.append(StyleRange(ws, ['INDEX', 'POINT DESCRIPTION', 'TAG NAME', 'DESCRIPTION'], True, colors.YELLOW))
 	for pin in oList:
 		if not pin.inPointDir:
 			ws.append(StyleRange(ws, [pin.index, pin.desc], False, colors.GREEN))
@@ -191,7 +191,7 @@ def WriteExcel(fileName, iList, oList, pList, pageList):
 
 	#write function blocks list
 	ws.append([StyleMerge(ws, 'PARAMETERS', 'A{0}:F{0}'.format(len(iList + oList) + 9))])
-	ws.append(StyleRange(ws, ['INDEX', 'POINT DESCRIPTION', 'TAG NAME', 'DESCRIPTION', 'PARA', 'VALUE'], True, colors.YELLOW))
+	ws.append(StyleRange(ws, ['INDEX', 'FUNCTION BLOCK DESCRIPTION', 'TAG NAME', 'DESCRIPTION', 'PARA', 'VALUE'], True, colors.YELLOW))
 	for pin in pList:
 		if not pin.inPointDir:
 			ws.append(StyleRange(ws, [pin.index, pin.desc], False, colors.GREEN))
