@@ -16,10 +16,47 @@ from pyforms.controls import ControlCombo
 from pyforms.controls import ControlText
 from pyforms.controls import ControlNumber
 from pyforms.controls import ControlList
+from AnyQt.QtWidgets import QFileDialog
 from openpyxl import load_workbook
 from Import import Import
 from Config import Config
 from Combine import Combine
+
+class ControlFileOpen(ControlFile):
+	def __init__(self, *args, **kwargs):
+		super(ControlFileOpen, self).__init__(*args, **kwargs)
+		self.use_save_dialog = kwargs.get('use_save_dialog', False)
+		self.opened_file_type = kwargs.get('opened_file_type', '')
+
+	def click(self):
+		if self.opened_file_type == 'txt':
+			value, _ = QFileDialog.getOpenFileName(self.parent, self._label, self.value, "Text Files (*.txt);;All Files (*)")
+		elif self.opened_file_type == 'xlsx':
+			value, _ = QFileDialog.getOpenFileName(self.parent, self._label, self.value, "Excel Files (*.xlsx);;All Files (*)")
+		elif self.opened_file_type == 'json':
+			value, _ = QFileDialog.getOpenFileName(self.parent, self._label, self.value, "Config Files (*.json);;All Files (*)")
+		else:
+			value, _ = QFileDialog.getOpenFileName(self.parent, self._label, self.value)
+		if value and len(value) > 0:
+			self.value = value
+
+class ControlFileSave(ControlFile):
+	def __init__(self, *args, **kwargs):
+		super(ControlFileSave, self).__init__(*args, **kwargs)
+		self.use_save_dialog = kwargs.get('use_save_dialog', True)
+		self.saved_file_type = kwargs.get('saved_file_type', '')
+
+	def click(self):
+		if self.saved_file_type == 'txt':
+			value, _ = QFileDialog.getSaveFileName(self.parent, self._label, self.value, "Text Files (*.txt);;All Files (*)")
+		elif self.saved_file_type == 'xlsx':
+			value, _ = QFileDialog.getSaveFileName(self.parent, self._label, self.value, "Excel Files (*.xlsx);;All Files (*)")
+		elif self.saved_file_type == 'json':
+			value, _ = QFileDialog.getSaveFileName(self.parent, self._label, self.value, "Config Files (*.json);;All Files (*)")
+		else:
+			value, _ = QFileDialog.getSaveFileName(self.parent, self._label, self.value)
+		if value and len(value) > 0:
+			self.value = value if value[-1 - len(self.saved_file_type):] == '.' + self.saved_file_type else value + '.' + self.saved_file_type
 
 class OptimumS(BaseWidget):
 	def __init__(self):
@@ -47,8 +84,8 @@ class OptimumS(BaseWidget):
 		self._configGenButton	= ControlButton('Generate')
 		self._configTextArea	= ControlTextArea()
 		#Combine controls
-		self._openDBFile		= ControlFile('Choose the database file:	')
-		self._openArgFile		= ControlFile('Choose the argument file:	')
+		self._openDBFile		= ControlFileOpen('Choose the database file:	', opened_file_type='txt')
+		self._openArgFile		= ControlFileOpen('Choose the argument file:	', opened_file_type='xlsx')
 		self._combineButton		= ControlButton('Combine')
 		self._combineTextArea	= ControlTextArea()
 
@@ -121,7 +158,7 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_OpenFile(self):
 		try:
-			self._openImportFile = ControlFile('Choose library file:')
+			self._openImportFile = ControlFileOpen('Choose library file:', opened_file_type='txt')
 			self._openImportFile.click()
 			self._importPathText.value = self._openImportFile.value
 		except Exception as err:
@@ -192,12 +229,13 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_Load(self):
 		try:
-			self._loadConfigFile = ControlFile()
+			self._loadConfigFile = ControlFileOpen(opened_file_type='json')
 			self._loadConfigFile.click()
 			if self._loadConfigFile.value != '':
 				with open(self._loadConfigFile.value, 'r') as f:
 					jstr = json.load(f)
 					table = jstr['value']
+					self._configDict.clear()
 					for row in table:
 						self.__helper_Add2Dict(row)
 					self._configList.load_form(jstr, None)
@@ -221,7 +259,10 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_Del(self):
 		try:
-			for i in range(int(self._configList.get_currentrow_value()[2]), int(self._configList.get_currentrow_value()[3]) + 1):
+			currentRow = self._configList.get_currentrow_value()
+			if len(currentRow) < 4:
+				raise Exception('No row selected.')
+			for i in range(int(currentRow[2]), int(currentRow[3]) + 1):
 				del self._configDict[i]
 			self._configList.__sub__(self._configList.selected_row_index)
 		except Exception as err:
@@ -238,7 +279,7 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_Save(self):
 		try:
-			self._saveConfigFile = ControlFile(use_save_dialog=True)
+			self._saveConfigFile = ControlFileSave(saved_file_type='json')
 			self._saveConfigFile.click()
 			if self._saveConfigFile.value != '':
 				with open(self._saveConfigFile.value, 'w') as f:
@@ -256,7 +297,7 @@ class OptimumS(BaseWidget):
 			for i in range(len(table)):
 				table[i][0] += '.txt'
 			table.insert(0, ['Library', 'Loop Name', 'Start Page', 'End Page'])
-			self._saveArgFile = ControlFile(use_save_dialog=True)
+			self._saveArgFile = ControlFileSave(saved_file_type='xlsx')
 			self._saveArgFile.click()
 			Config(table, self._saveArgFile.value)
 			self._configTextArea.__add__('Arguments file is generated.')
@@ -266,7 +307,7 @@ class OptimumS(BaseWidget):
 
 	def __buttonAction_Combine(self):
 		try:
-			self._saveDPUFile = ControlFile(use_save_dialog=True)
+			self._saveDPUFile = ControlFileSave(saved_file_type='txt')
 			self._saveDPUFile.click()
 			Combine(self._openDBFile.value, self._saveDPUFile.value, self._openArgFile.value)
 			self._combineTextArea.__add__('New DPU file is generated.')
