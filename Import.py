@@ -2,7 +2,7 @@
 '''
 AUTHOR:			Yao Ji (jiyao94@126.com)
 CREATED DATE:	2018/6/22
-LAST UPDATE:	2018/7/18
+LAST UPDATE:	2018/7/19
 DESCRIPTION:	This tool is used to read the I/O ports and the function blocks of the DPU
 				configuration file and export to an Excel file. All the external ports and
 				parametric function blocks should follow standard description form. The
