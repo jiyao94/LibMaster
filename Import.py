@@ -171,6 +171,13 @@ def WriteExcel(fileName, iList, oList, pList, pageList):
 	#write input ports list
 	ws.append([StyleMerge(ws, 'INPUTS', 'A3:C3')])
 	ws.append(StyleRange(ws, ['INDEX', 'POINT DESCRIPTION', 'TAG NAME'], True, colors.YELLOW))
+	conflict_lst = [False] * len(iList)
+	for p in iList:
+		for q in iList:
+			if p is not q and p.index == q.index:
+				conflict_lst[iList.index(p)], conflict_lst[iList.index(q)] = True, True
+			else:
+				pass
 	for pin in iList:
 		ws.append([pin.index, pin.desc])
 	StyleBorder(ws, 3, len(iList) + 4, 3)
@@ -230,14 +237,16 @@ def Import(dirs, OutputFunc = print):
 		#write the lists into Excel
 		OutputFunc('\tWriting... ')
 		WriteExcel(RemovePath(fileName), iList, oList, pList, pageList)
-		OutputFunc('\tDone!')
 
 		#copy file to library
 		try:
 			shutil.copy2(fileName, 'Library/' + RemovePath(fileName))
-			files.append(RemovePath(fileName))
 		except shutil.SameFileError: 
 			pass
+
+		#finish, append file name to return list
+		OutputFunc('\tDone!')
+		files.append(RemovePath(fileName))
 	return files
 
 #start main
