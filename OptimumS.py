@@ -1,11 +1,19 @@
-##############################################################################
+###############################################################################
 '''
 AUTHOR:			Yao Ji (jiyao94@126.com)
 CREATED DATE:	2018/7/13
-LAST UPDATE:	2018/7/18
-DESCRIPTION:
+LAST UPDATE:	2018/7/20
+DESCRIPTION:	This is the UI of the three tools: Import, Config, Combine. It
+				replace some of the functions in Config tool: User no longer
+				needs to specify Config file 'Config.xlsx', configuration can
+				be directly specified in the UI.
+				Python UI is using PyQT5 library. This tool uses Pyforms, which
+				is wrapper of PyQT. Please check its website for detaisl.
+				https://github.com/UmSenhorQualquer/pyforms
+				(Note that we modifies the official version of Pyforms to adapt
+				to this tool.)
 '''
-##############################################################################
+###############################################################################
 import os, json, pyforms, traceback
 from pyforms import BaseWidget
 from pyforms.controls import ControlFile
