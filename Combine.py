@@ -370,7 +370,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 					if line_lib.find('\\') > -1:
 						desc = line_lib.split('\\')[1].split(',')[0]
 						for x in input_lst_copy:
-							if x.index == desc[:5]:
+							if x.index == desc[:5] and x.tagLoc != [0, 0]:
 								line_lib = line_lib.split('\\')[0] + '\\&&' + line_lib.split('\\')[1][line_lib.split('\\')[1].find(','):]
 								input_lst_copy.remove(x)
 								break
@@ -384,9 +384,10 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 				line_lib = f_lib.readline()
 
 		#insert empty pages
-		while i < len(lib_lst) - 1 and lib_lst[i].sPage + pageCounter < lib_lst[i + 1].sPage:
-			f.write('\nPage, {0}:{0}, \nPageEnd\n'.format(lib_lst[i].sPage + pageCounter))
-			pageCounter += 1
+		emptyPageNum = lib_lst[i].sPage + pageCounter
+		while i < len(lib_lst) - 1 and emptyPageNum < lib_lst[i + 1].sPage:
+			f.write('\nPage, {0}:{1}, 0 x10ms 0 0 0\nPageEnd\n'.format(emptyPageNum, 2 * emptyPageNum))
+			emptyPageNum += 1
 
 	#copy point config of DB to Final, until END_AX (exclusive)
 	while line_db.find('END_AX') < 0:
@@ -462,6 +463,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 	for x in lib_lst:
 		input_lst += x.input_lst
 		output_lst += x.output_lst
+	input_lst_copy = input_lst[:]
 	f_t = open('.DPUxx.txt.temp', 'r', encoding='utf-16')
 	f = open(outputFileName, 'w', encoding='utf-16')
 	line_t = f_t.readline()
@@ -492,9 +494,18 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 			blockNum = int(line_t.split(', ')[2].split(':')[0])
 		elif line_t.find('Para=') > -1 and funcName in ['XPgAI', 'XPgDI']:
 			for x in input_lst:
-				if x.indLoc == [pageNum, blockNum]:
+				if x.indLoc == [pageNum, blockNum] and x.tagLoc != [0, 0]:
 					line_t = '\t\tPara= {0},{1},\n'.format(x.tagLoc[0], x.tagLoc[1])
 					input_lst.remove(x)
+					break
+				else:
+					pass
+		elif line_t.find('Out=') > -1 and funcName in ['XPgAI', 'XPgDI'] and line_t.find('\\') > -1:
+			desc = line_t.split('\\')[1].split(',')[0]
+			for x in input_lst_copy:
+				if x.index == desc[:5] and x.tagLoc != [0, 0]:
+					line_t = line_t.split('\\')[0] + '\\&&' + line_t.split('\\')[1][line_t.split('\\')[1].find(','):]
+					input_lst_copy.remove(x)
 					break
 				else:
 					pass

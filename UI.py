@@ -68,7 +68,7 @@ class ControlFileSave(ControlFile):
 
 class LibMaster(BaseWidget):
 	def __init__(self):
-		super(OptimumS, self).__init__('OptimumS')
+		super(LibMaster, self).__init__('OptimumS')
 		#Import controls
 		self._openImportFile	= None
 		self._openImportDir		= None
@@ -308,6 +308,7 @@ class LibMaster(BaseWidget):
 			self._saveArgFile.click()
 			Config(table, self._saveArgFile.value)
 			self._configTextArea.__add__('Arguments file is generated.')
+			self._openArgFile.value = self._saveArgFile.value
 		except Exception as err:
 			self._configTextArea.__add__('\'Generate\' error: ' + repr(err))
 			self._configTextArea.__add__(traceback.format_exc())
