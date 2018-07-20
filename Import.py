@@ -153,6 +153,16 @@ def StyleBorder(ws, start_row, end_row, columns):
 			cell = ws.cell(row = i + 1, column = j + 1)
 			cell.border = Border(top=thin, left=thin, right=thin, bottom=thin)
 
+def CheckIndexConflict(lst):
+	conflict_lst = [False] * len(lst)
+	for p in lst:
+		for q in lst:
+			if p is not q and p.index == q.index:
+				conflict_lst[lst.index(p)], conflict_lst[lst.index(q)] = True, True
+			else:
+				pass
+	return conflict_lst
+
 #write the I/O list into Excel
 #openpyxl is used to write .xlsx format
 def WriteExcel(fileName, iList, oList, pList, pageList):
@@ -171,15 +181,13 @@ def WriteExcel(fileName, iList, oList, pList, pageList):
 	#write input ports list
 	ws.append([StyleMerge(ws, 'INPUTS', 'A3:C3')])
 	ws.append(StyleRange(ws, ['INDEX', 'POINT DESCRIPTION', 'TAG NAME'], True, colors.YELLOW))
-	conflict_lst = [False] * len(iList)
-	for p in iList:
-		for q in iList:
-			if p is not q and p.index == q.index:
-				conflict_lst[iList.index(p)], conflict_lst[iList.index(q)] = True, True
-			else:
-				pass
+	conflict_lst = CheckIndexConflict(iList)
 	for pin in iList:
 		ws.append([pin.index, pin.desc])
+		if conflict_lst[iList.index(pin)]:
+			ws[len(list(ws.rows))][0].fill = PatternFill(fill_type='solid', fgColor=colors.RED)
+		else:
+			pass
 	StyleBorder(ws, 3, len(iList) + 4, 3)
 
 	ws.append([None])
@@ -187,11 +195,16 @@ def WriteExcel(fileName, iList, oList, pList, pageList):
 	#write output ports list
 	ws.append([StyleMerge(ws, 'OUTPUTS', 'A{0}:D{0}'.format(len(iList) + 6))])
 	ws.append(StyleRange(ws, ['INDEX', 'POINT DESCRIPTION', 'TAG NAME', 'DESCRIPTION'], True, colors.YELLOW))
+	conflict_lst = CheckIndexConflict(oList)
 	for pin in oList:
 		if not pin.inPointDir:
 			ws.append(StyleRange(ws, [pin.index, pin.desc], False, colors.GREEN))
 		else:
 			ws.append([pin.index, pin.desc])
+		if conflict_lst[oList.index(pin)]:
+			ws[len(list(ws.rows))][0].fill = PatternFill(fill_type='solid', fgColor=colors.RED)
+		else:
+			pass
 	StyleBorder(ws, len(iList) + 6, len(iList + oList) + 7, 4)
 
 	ws.append([None])
@@ -199,11 +212,16 @@ def WriteExcel(fileName, iList, oList, pList, pageList):
 	#write function blocks list
 	ws.append([StyleMerge(ws, 'PARAMETERS', 'A{0}:F{0}'.format(len(iList + oList) + 9))])
 	ws.append(StyleRange(ws, ['INDEX', 'FUNCTION BLOCK DESCRIPTION', 'TAG NAME', 'DESCRIPTION', 'PARA', 'VALUE'], True, colors.YELLOW))
+	conflict_lst = CheckIndexConflict(pList)
 	for pin in pList:
 		if not pin.inPointDir:
 			ws.append(StyleRange(ws, [pin.index, pin.desc], False, colors.GREEN))
 		else:
 			ws.append([pin.index, pin.desc])
+		if conflict_lst[pList.index(pin)]:
+			ws[len(list(ws.rows))][0].fill = PatternFill(fill_type='solid', fgColor=colors.RED)
+		else:
+			pass
 	StyleBorder(ws, len(iList + oList) + 9, len(iList + oList + pList) + 10, 6)
 
 	#change the width of the columns
