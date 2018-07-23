@@ -33,6 +33,7 @@ Structure:		Main function gets user inputs and then calls Combine().
 					libs for previous libs input to connect
 				8. Rewrite the file from begining to change DB physical points
 				connections and inter-lib connections. Copy everything else.
+				9. Remove temp file for the first write.
 '''
 ##############################################################################
 
@@ -296,6 +297,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 						for j in range(len(lib_lst[i].output_lst)):
 							if lib_lst[i].output_lst[j].index == line_lib.split('\\')[1].split(' ')[0]:
 								lib_lst[i].output_lst[j].pageLoc[:] = [newPageNum, blockNum]
+								line_lib = line_lib.split('\\')[0] + '\\&' + lib_lst[i].output_lst[j].tag + line_lib.split('\\')[1][line_lib.split('\\')[1].find(','):]
 								break
 							else:
 								pass
