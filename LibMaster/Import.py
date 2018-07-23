@@ -2,13 +2,18 @@
 '''
 AUTHOR:			Yao Ji (jiyao94@126.com)
 CREATED DATE:	2018/6/22
-LAST UPDATE:	2018/7/19
+LAST UPDATE:	2018/7/23
 DESCRIPTION:	This tool is used to read the I/O ports and the function blocks of the DPU
 				configuration file and export to an Excel file. All the external ports and
 				parametric function blocks should follow standard description form. The
 				input can be a library file or a directory contains libraries. The output
 				file will be exported to './Library' directory. This tool will also copy 
 				the config files to this directory.
+
+Structure:		Main function gets all valid libraries from user input and then calls
+				Import(). Import() deals with each file using loop and return succeeded
+				files. For each loop, it calls ReadFile() to get lists, and then calls
+				WriteExcel() to write lists into file. Finally copy lib to directory.
 '''
 ##########################################################################################
 

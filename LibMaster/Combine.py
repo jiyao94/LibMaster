@@ -2,7 +2,7 @@
 '''
 AUTHOR:			Yao Ji (jiyao94@126.com)
 CREATED DATE:	2018/6/29
-LAST UPDATE:	2018/7/20
+LAST UPDATE:	2018/7/23
 DESCRIPTION:	This tool takes a database DPU file and an Argument file, and
 				then generates a new DPU file based on the database and the
 				arguments. The database should contain all the tags specified
@@ -14,6 +14,25 @@ DESCRIPTION:	This tool takes a database DPU file and an Argument file, and
 				This file specifies all the parameters that will set in the
 				Argument file. A sample is provided in the package. For more
 				details, please check README.
+
+Structure:		Main function gets user inputs and then calls Combine().
+				Combine() does the following things in order:
+				1. Translate "para_def.txt" into dictionary.
+				2. Reads config from Argument file to produce lib_lst.
+				3. Store point dir in DB and libs. 
+				4. Copy DB physical points.
+				5. Read and store arguments for each lib.
+				6. Copy lib pages
+				7. Copy point dirs in DB and libs
+				The above steps complete the first write of the new DPU file.
+				But due to the order of the file, we cannot change everything
+				in one single write. 
+					- we don't know the page number of output ports for DB
+					physical points to connect
+					- we don't know the page number of output ports of later
+					libs for previous libs input to connect
+				8. Rewrite the file from begining to change DB physical points
+				connections and inter-lib connections. Copy everything else.
 '''
 ##############################################################################
 
@@ -321,13 +340,13 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 							para_lst = line_lib.split('Para= ')[1].split(',')
 							para_lst[0] = str(lib_lst[i].sPage + pageList.index(connectPage))
 							line_lib = '\t\tPara= ' + ','.join(para_lst)
-						#change physical page connections
+						#change physical page connections or inter-lib connections
 						else:
 							for x in lib_lst[i].input_lst:
 								if x.indLoc == [pageNum, blockNum]:
-									if x.tagLoc == [0, 0]:		#connection is other libs not DB, store new pages
+									if x.tagLoc == [0, 0]:		#connection is later libs not DB, store new pages
 										lib_lst[i].input_lst[lib_lst[i].input_lst.index(x)].indLoc[:] = [newPageNum, blockNum]
-									else:						#connection is DB, make connection
+									else:						#connection is DB or previous libs, make connection
 										line_lib = '\t\tPara= {0},{1},\n'.format(x.tagLoc[0], x.tagLoc[1])
 										lib_lst[i].input_lst.remove(x)
 									break
@@ -457,13 +476,15 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 	#finish writing
 	f.close()
 
-	#in the second write, connect DB points to libs
-	#also, complete the remaining inter-lib connections
+	###################### In the second write, connect DB points to libs
+	###################### Also, complete the remaining inter-lib connections
+	#combine input and output lists for different libs together
 	input_lst, output_lst = [], []
 	for x in lib_lst:
 		input_lst += x.input_lst
 		output_lst += x.output_lst
 	input_lst_copy = input_lst[:]
+	#rewrite output connections with DB
 	f_t = open('.DPUxx.txt.temp', 'r', encoding='utf-16')
 	f = open(outputFileName, 'w', encoding='utf-16')
 	line_t = f_t.readline()
@@ -486,6 +507,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 			pass
 		f.write(line_t)
 		line_t = f_t.readline()
+	#rewrite input connections between libs
 	while line_t.find('[POINT_DIR INFO]') < 0:
 		if line_t.find('Page, ') > -1:
 			pageNum = int(line_t.split('Page, ')[1].split(':')[0])
