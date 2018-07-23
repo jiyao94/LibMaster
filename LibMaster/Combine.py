@@ -294,6 +294,7 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 				elif line_lib.find('In=') > -1:
 					if line_lib.find('\\') > -1:
 						#add new page number to output list
+						#change description to '& + tag'
 						for j in range(len(lib_lst[i].output_lst)):
 							if lib_lst[i].output_lst[j].index == line_lib.split('\\')[1].split(' ')[0]:
 								lib_lst[i].output_lst[j].pageLoc[:] = [newPageNum, blockNum]
