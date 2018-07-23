@@ -1,5 +1,5 @@
 # LibMaster
-LibMaster is a tool that enables repeatedly using similar function blocks in different DPU configration files. It takes **DPU libraries** and a **DPU database**, and then generates a new DPU file following an **Application plan**. Before using this tool, users should have DPU libraries with **correct standards**, which will be specified in this README.
+LibMaster is a tool that enables repeatedly using similar function blocks in different DPU configuration files. It takes **DPU libraries** and a **DPU database**, and then generates a new DPU file following an **Application plan**. Before using this tool, users should have DPU libraries with **correct standards**, which will be specified in this README.
 
 To get the lastest update of this tool, please refer to [source code](https://github.com/jiyao94/LibMaster) on GitHub.
 
@@ -10,7 +10,15 @@ To run this tool, first download or clone `source code` from GitHub. Then you ne
 
 
 ## Library Standards
+DPU libraries are basically DPU configuration files with specific tag and description. Each library should define inputs, outputs, and function blocks that define parameters.
 
+For **inputs**, all the input ports should be `XPgAI` or `XPgDI`. Their output pin description should has the form `AIxxx DESCRIPTION` or `DIxxx DESCRIPTION`, where `xxx` is from 001 to 999.<br>
+For **outputs**, all the output ports should be `XPgAO`, `XPgDO`, `XNetAO`, or `XNetDO`. For page outputs, their input pin description should has the form `AOxxx DESCRIPTION` or `DOxxx DESCRIPTION`. For net outputs, their tag name should be `AOxxx` or `DOxxx`, and then write the description in `Point Config`.<br>
+For **function blocks**, if they has `Point Config`, their tag name should be `FBxxx` and also fill in description. But if the function block doesn't have `Point Config`, then fill the output pin description as inputs with `FBxxx`.
+
+If the description or tag name is not following this form, the ports will not be recognized by the tool.
+
+For a detailed example, please check `DPU01_Lib Demo3.txt` in the Example.
 
 ## Tool Instructions
 This tool is consisted of three parts in order. `Import` reads standardized libraries and generates a list of inputs, outputs, and function blocks that can be parameterized. `Config` generates an **Argument file** for user to specify connections and parameters for each library accorading to the Application plan. `Combine` takes the database** and Argument file and outputs the new DPU file that can be directly loaded by the software. We will describe each of them in details in the following sections. All the three tools appear as independent scripts and can be direct run using python command line.
@@ -41,6 +49,6 @@ I02 #2_input_name
 Function_Block_Name
 ...
 ```
-We use `P` to represent parameter and `I` to represent input variable. The number after is the order of the parameter or input variable appears in the parameter or input line in the DPU configration file, separated by comma. Then, after a space is the parameter or input variable name. Tab also works to separate name and order. Empty line will not affect, but it's better to use empty lines to separate different function blocks to make the file more readable.
+We use `P` to represent parameter and `I` to represent input variable. The number after is the order of the parameter or input variable appears in the parameter or input line in the DPU configuration file, separated by comma. Then, after a space is the parameter or input variable name. Tab also works to separate name and order. Empty line will not affect, but it's better to use empty lines to separate different function blocks to make the file more readable.
 
 ## For developers
