@@ -9,10 +9,10 @@ To run this tool, first download or clone `source code` from GitHub. Then you ne
 ### Packaging stand alone execution file for Windows
 
 
-## Library standards
+## Library Standards
 
 
-## Tool Descriptions
+## Tool Instructions
 This tool is consisted of three parts in order. `Import` reads standardized libraries and generates a list of inputs, outputs, and function blocks that can be parameterized. `Config` generates an **Argument file** for user to specify connections and parameters for each library accorading to the Application plan. `Combine` takes the database** and Argument file and outputs the new DPU file that can be directly loaded by the software. We will describe each of them in details in the following sections. All the three tools appear as independent scripts and can be direct run using python command line.
 
 Besides using python command line, this tool also provides a UI creadted using [Pyforms](https://github.com/UmSenhorQualquer/pyforms), a wrapper for PyQT4/5. Although the command line tools for `Import` and `Combine` provide path auto-complete function, which makes it easier to choose file or directory using command line, UI is of course more user friendly. Note that there will be a little difference between CLT and UI for `Config` tool. Refer to the section below for details.
@@ -41,6 +41,6 @@ I02 #2_input_name
 Function_Block_Name
 ...
 ```
-We use `P` to represent parameter and `I` to represent input variable. The number after is the order of the parameter or input variable appears in the parameter or input line in the DPU configration file, separated by comma. Then, after a space is the parameter or input variable name. Tab also works to separate name and order. Empty line will not affect, but it's better to use empty lines to separate different blocks to make the file more readable.
+We use `P` to represent parameter and `I` to represent input variable. The number after is the order of the parameter or input variable appears in the parameter or input line in the DPU configration file, separated by comma. Then, after a space is the parameter or input variable name. Tab also works to separate name and order. Empty line will not affect, but it's better to use empty lines to separate different function blocks to make the file more readable.
 
 ## For developers
