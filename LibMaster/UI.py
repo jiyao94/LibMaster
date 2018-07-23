@@ -68,7 +68,7 @@ class ControlFileSave(ControlFile):
 
 class LibMaster(BaseWidget):
 	def __init__(self):
-		super(LibMaster, self).__init__('OptimumS')
+		super(LibMaster, self).__init__('LibMaster')
 		#Import controls
 		self._openImportFile	= None
 		self._openImportDir		= None
