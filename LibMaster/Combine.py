@@ -428,6 +428,10 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 			while line_lib.find('END_AX') < 0:
 				for x in lib_lst[i].module_lst:
 					if x.index == line_lib.split('=')[0]:
+						if x.tag is None:
+							raise Exception(x.index + ' has no tag name.')
+						else:
+							pass
 						config_lst = line_lib.split('=')[1].split(',')
 						config_lst[1] = x.desc
 						line_lib = x.tag + '=' + ','.join(config_lst)
@@ -455,6 +459,10 @@ def Combine(DBFileName, outputFileName, argFileName='Arguments.xlsx'):
 			while line_lib.find('END_DX') < 0:
 				for x in lib_lst[i].module_lst:
 					if x.index == line_lib.split('=')[0]:
+						if x.tag is None:
+							raise Exception(x.index + ' has no tag name.')
+						else:
+							pass
 						config_lst = line_lib.split('=')[1].split(',')
 						config_lst[1] = x.desc
 						line_lib = x.tag + '=' + ','.join(config_lst)
