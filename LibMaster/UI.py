@@ -322,5 +322,3 @@ class LibMaster(BaseWidget):
 		except Exception as err:
 			self._combineTextArea.__add__('Error: ' + repr(err))
 			self._combineTextArea.__add__(traceback.format_exc())
-
-pyforms.start_app(LibMaster)

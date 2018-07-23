@@ -2,9 +2,9 @@
 '''
 AUTHOR:			Yao Ji (jiyao94@126.com)
 CREATED DATE:	2018/6/28
-LAST UPDATE:	2018/7/20
+LAST UPDATE:	2018/7/22
 DESCRIPTION: 	This tool is used to generate Arguments file accroding to Config file.
-				Ti checks whether 'Config.xlsx' exists in the current directory. If not,
+				It checks whether 'Config.xlsx' exists in the current directory. If not,
 				it generates an empty one, otherwise it generates 'Arguments.xlsx'
 				according to 'Config.xlsx'. User can specifie library, loop name, and
 				start page in the config file.
