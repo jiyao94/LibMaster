@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['UI.py'],
+a = Analysis(['LibMaster.py'],
              pathex=['C:\\Users\\XH\\source\\repos\\LibMaster'],
              binaries=[],
              datas=[('./ui','./pyforms/gui/controls')],
@@ -24,6 +24,6 @@ exe = EXE(pyz,
           name='LibMaster',
           debug=False,
           strip=False,
-          upx=True,
+          upx=False,
           runtime_tmpdir=None,
           console=False )
