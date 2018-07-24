@@ -17,7 +17,7 @@ Now you have finished environment setup. You can go to LibMaster folder and run 
 
 
 ### Packing stand alone execution file for Windows
-On Windows platform, we also provide methods to run this tool without python environment. In the `requirements-win.txt` you will install two packing tools: [Pyinstaller]() and [cx-freeze](). They can package python environment into into one single execution file or a folder contains all dependencies. For detailed usage for these tools, please refer to their websites.
+On Windows platform, we also provide methods to run this tool without python environment. In the `requirements-win.txt` you will install two packing tools: [Pyinstaller](http://www.pyinstaller.org/) and [cx-Freeze](http://cx-freeze.sourceforge.net/). They can package python environment into into one single execution file or a folder contains all dependencies. For detailed usage for these tools, please refer to their websites.
 
 For **Pyinstaller**, go to `LibMaster/` directory and type command:
 ```
@@ -25,7 +25,7 @@ pyinstaller LibMaster.spec --clean
 ```
 This will pack the GUI tool into one single execution file under `dist/` directory. 
 
-For **cx-freeze**, go to `LibMaster/` directory and type command:
+For **cx-Freeze**, go to `LibMaster/` directory and type command:
 ```
 python setup.py build
 ```
