@@ -16,22 +16,22 @@ Now you have finished environment setup. You can go to LibMaster folder and run 
 ### Debug mode
 
 
-### Packing stand alone execution file for Windows
-On Windows platform, we also provide methods to run this tool without python environment. In the `requirements-win.txt` you will install two packing tools: [Pyinstaller](http://www.pyinstaller.org/) and [cx-Freeze](http://cx-freeze.sourceforge.net/). They can package python environment into into one single execution file or a folder contains all dependencies. For detailed usage for these tools, please refer to their websites.
+### Packaging stand alone execution file for Windows
+On Windows platform, we also provide methods to run this tool without python environment. In the `requirements-win.txt` you will install two packaging tools: [Pyinstaller](http://www.pyinstaller.org/) and [cx-Freeze](http://cx-freeze.sourceforge.net/). They can package python environment into into one single execution file or a folder contains all dependencies. For detailed usage for these tools, please refer to their websites.
 
 For **Pyinstaller**, go to `LibMaster/` directory and type command:
 ```
 pyinstaller LibMaster.spec --clean
 ```
-This will pack the GUI tool into one single execution file under `dist/` directory. 
+This will package the GUI tool into one single execution file under `dist/` directory. 
 
 For **cx-Freeze**, go to `LibMaster/` directory and type command:
 ```
 python setup.py build
 ```
-This will pack the GUI tool into a folder with the execution file and all the dependencies.
+This will package the GUI tool into a folder with the execution file and all the dependencies.
 
-***Important Note:*** both packing tool don't pack "para_def.txt". You will need to copy this file into the same folder as the execution file manually for the Combine part to work. We didn't pack this file because this file is varied for different applications. See the section below for details.
+***Important Note:*** both packageing tool don't pack "para_def.txt". You will need to copy this file into the same folder as the execution file manually for the Combine part to work. We didn't pack this file because this file is varied for different applications. See the section below for details.
 
 ## Library Standards
 DPU libraries are basically DPU configuration files with specific tag and description. Each library should define inputs, outputs, and function blocks that define parameters.
