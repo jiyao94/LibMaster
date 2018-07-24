@@ -1,0 +1,10 @@
+AnyQt==0.0.8
+et-xmlfile==1.0.1
+jdcal==1.4
+numpy==1.15.0
+openpyxl==2.5.4
+PyQt5==5.11.2
+PyQt5-sip==4.19.12
+pyreadline==2.1
+python-dateutil==2.7.3
+six==1.11.0
