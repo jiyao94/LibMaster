@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# A simple setup script to create an executable using PyQt5. This also
-# demonstrates the method for creating a Windows executable that does not have
-# an associated console.
-#
-# PyQt5app.py is a very simple type of PyQt5 application
-#
 # Run the build process by running the command 'python setup.py build'
 #
 # If everything works well you should find a subdirectory in the build
@@ -26,11 +20,11 @@ options = {
 }
 
 executables = [
-	Executable('OptimumS.py', base=base)
+	Executable('LibMaster.py', base=base)
 ]
 
-setup(name='OptimumS',
-		version='0.1',
+setup(name='LibMaster',
+		version='0.3',
 		description='A Tool to Combine DPU database and libraries',
 		options=options,
 		executables=executables
