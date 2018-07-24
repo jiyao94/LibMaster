@@ -14,7 +14,7 @@ DESCRIPTION:	This is the UI of the three tools: Import, Config, Combine. It
 				to this tool.)
 '''
 ###############################################################################
-import os, json, pyforms, traceback
+import os, json, traceback
 from pyforms import BaseWidget
 from pyforms.controls import ControlFile
 from pyforms.controls import ControlDir
