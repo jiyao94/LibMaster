@@ -37,7 +37,7 @@ Structure:		Main function gets user inputs and then calls Combine().
 '''
 ##############################################################################
 
-import os, json, readline, glob, traceback
+import os, json, readline, glob, traceback, argparse
 from collections import namedtuple
 from openpyxl import load_workbook
 
@@ -560,6 +560,10 @@ def complete(text, state):
 #start main
 if __name__ == '__main__':
 	try:
+		parser = argparse.ArgumentParser()
+		parser.add_argument('--debug', help='Turn on debug mode.', action='store_true')
+		args = parser.parse_args()
+
 		readline.set_completer(complete)					#add path auto-complete
 		readline.parse_and_bind("tab: complete")			#using tab for auto-complete
 		readline.set_completer_delims('\t')					#just like in shell
@@ -571,5 +575,7 @@ if __name__ == '__main__':
 		Combine(DBFileName, outputFileName)
 		input('New DPU file is generated.')
 	except Exception as err:
-		print('Exception: ' + repr(err))
-		input(traceback.format_exc())
+		if args.debug:
+			input(traceback.format_exc())
+		else:
+			print('Exception: ' + repr(err))

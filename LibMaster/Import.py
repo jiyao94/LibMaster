@@ -17,7 +17,7 @@ Structure:		Main function gets all valid libraries from user input and then call
 '''
 ##########################################################################################
 
-import os, glob, readline, shutil, traceback
+import os, glob, readline, shutil, traceback, argparse
 from collections import namedtuple
 from openpyxl.workbook import Workbook
 from openpyxl.cell import Cell
@@ -275,6 +275,10 @@ def Import(dirs, OutputFunc = print):
 #start main
 if __name__ == '__main__':
 	try:
+		parser = argparse.ArgumentParser()
+		parser.add_argument('--debug', help='Turn on debug mode.', action='store_true')
+		args = parser.parse_args()
+
 		#create './Library' directory if not exist
 		if not os.path.exists('Library'):
 			os.mkdir('Library')
@@ -305,5 +309,7 @@ if __name__ == '__main__':
 
 	#error report
 	except Exception as err:
-		print('\nException: ' + repr(err))
-		input(traceback.format_exc())
+		if args.debug:
+			input(traceback.format_exc())
+		else:
+			input('\nException: ' + repr(err))

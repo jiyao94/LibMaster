@@ -13,7 +13,7 @@ Structure:		Main function calls Config() to write Argument file.
 '''
 ########################################################################################
 
-import os, traceback
+import os, traceback, argparse
 from openpyxl.workbook import Workbook
 from openpyxl import load_workbook
 from openpyxl.cell import Cell
@@ -74,6 +74,10 @@ def Config(table, argsFileName='Arguments.xlsx'):
 #start main
 if __name__ == '__main__':
 	try:
+		parser = argparse.ArgumentParser()
+		parser.add_argument('--debug', help='Turn on debug mode.', action='store_true')
+		args = parser.parse_args()
+
 		if not os.path.exists('Config.xlsx'):
 			wb = Workbook()
 			ws = wb.active
@@ -91,5 +95,7 @@ if __name__ == '__main__':
 
 			input('Finish!\nArguments file is generated.')
 	except Exception as err:
-		print('Exception: ' + repr(err))
-		input(traceback.format_exc())
+		if args.debug:
+			input(traceback.format_exc())
+		else:
+			input('Exception: ' + repr(err))
