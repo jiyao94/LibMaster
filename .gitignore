@@ -1,5 +1,7 @@
 __pycache__/
-*.pyc
 .vs/
 build/
 dist/
+example/
+Library/
+*.pyc
