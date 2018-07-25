@@ -14,7 +14,10 @@ pip install -r requirements.txt
 Now you have finished environment setup. You can go to LibMaster folder and run `LibMaster.py` for tool with graphic UI, or run `Import.py`, `Config.py`, `Combine.py` for each part of the tool separately with command line.
 
 ### Debug mode
-All scripts support debug mode, which will print traceback messages when exception occurs. Simply add `--debug` option after the script.
+All scripts support debug mode, which will print traceback messages when exception occurs. Simply add `--debug` option after the script. For example, in python command line you can use the command run debug mode for GUI:
+```
+python LibMaster.py --debug
+```
 
 ### Packaging stand alone execution file for Windows
 On Windows platform, we also provide methods to run this tool without python environment. In the `requirements-win.txt` you will install two packaging tools: [Pyinstaller](http://www.pyinstaller.org/) and [cx-Freeze](http://cx-freeze.sourceforge.net/). They can package python environment into into one single execution file or a folder contains all dependencies. For detailed usage for these tools, please refer to their websites.
