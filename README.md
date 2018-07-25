@@ -14,7 +14,7 @@ pip install -r requirements.txt
 Now you have finished environment setup. You can go to LibMaster folder and run `LibMaster.py` for tool with graphic UI, or run `Import.py`, `Config.py`, `Combine.py` for each part of the tool separately with command line.
 
 ### Debug mode
-All scripts support debug mode, which will print traceback messages when exception occurs. Simply add `--debug` option after the script. For example, you can use the command run debug mode for GUI:
+All scripts support debug mode, which will print traceback messages when exception occurs. Simply add `--debug` option after the script. For example, in python command line you can use the command run debug mode for GUI:
 ```
 python LibMaster.py --debug
 ```
