@@ -2,7 +2,7 @@
 '''
 AUTHOR:			Yao Ji (jiyao94@126.com)
 CREATED DATE:	2018/7/13
-LAST UPDATE:	2018/7/20
+LAST UPDATE:	2018/7/25
 DESCRIPTION:	This is the UI of the three tools: Import, Config, Combine. It
 				replace some of the functions in Config tool: User no longer
 				needs to specify Config file 'Config.xlsx', configuration can
@@ -69,6 +69,7 @@ class ControlFileSave(ControlFile):
 class LibMaster(BaseWidget):
 	def __init__(self):
 		super(LibMaster, self).__init__('LibMaster')
+		self.debug = False
 		#Import controls
 		self._openImportFile	= None
 		self._openImportDir		= None
@@ -171,7 +172,8 @@ class LibMaster(BaseWidget):
 			self._importPathText.value = self._openImportFile.value
 		except Exception as err:
 			self._importTextArea.__add__('Open file error: ' + repr(err))
-			self._importTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._importTextArea.__add__(traceback.format_exc())
 
 	def __buttonAction_OpenDir(self):
 		try:
@@ -180,7 +182,8 @@ class LibMaster(BaseWidget):
 			self._importPathText.value = self._openImportDir.value
 		except Exception as err:
 			self._importTextArea.__add__('Open file error: ' + repr(err))
-			self._importTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._importTextArea.__add__(traceback.format_exc())
 
 	def __buttonAction_Import(self):
 		try:
@@ -211,7 +214,8 @@ class LibMaster(BaseWidget):
 				self._importTextArea.__add__('No file or directory selected.')
 		except Exception as err:
 			self._importTextArea.__add__('Error: ' + repr(err))
-			self._importTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._importTextArea.__add__(traceback.format_exc())
 
 	def __helper_Add2Dict(self, lst):
 		combo, name, pageNum = lst[0], lst[1], int(lst[2])
@@ -252,7 +256,8 @@ class LibMaster(BaseWidget):
 			self._configTextArea.__add__('List loaded from ' + self._loadConfigFile.value)
 		except Exception as err:
 			self._configTextArea.__add__('\'Load\' error: ' + repr(err))
-			self._configTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._configTextArea.__add__(traceback.format_exc())
 
 	def __buttonAction_Add(self):
 		try:
@@ -263,7 +268,8 @@ class LibMaster(BaseWidget):
 			self._configList.resizecolumns = False
 		except Exception as err:
 			self._configTextArea.__add__('\'Add\' error: ' + repr(err))
-			self._configTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._configTextArea.__add__(traceback.format_exc())
 
 	def __buttonAction_Del(self):
 		try:
@@ -274,7 +280,8 @@ class LibMaster(BaseWidget):
 			self._configList.__sub__(self._configList.selected_row_index)
 		except Exception as err:
 			self._configTextArea.__add__('\'Delete\' error: ' + repr(err))
-			self._configTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._configTextArea.__add__(traceback.format_exc())
 
 	def __buttonAction_Clear(self):
 		try:
@@ -282,7 +289,8 @@ class LibMaster(BaseWidget):
 			self._configList.clear()
 		except Exception as err:
 			self._configTextArea.__add__('\'Clear\' error: ' + repr(err))
-			self._configTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._configTextArea.__add__(traceback.format_exc())
 
 	def __buttonAction_Save(self):
 		try:
@@ -296,7 +304,8 @@ class LibMaster(BaseWidget):
 			self._configTextArea.__add__('List saved to ' + self._saveConfigFile.value)
 		except Exception as err:
 			self._configTextArea.__add__('\'Save\' error: ' + repr(err))
-			self._configTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._configTextArea.__add__(traceback.format_exc())
 
 	def __buttonAction_Gen(self):
 		try:
@@ -311,7 +320,8 @@ class LibMaster(BaseWidget):
 			self._openArgFile.value = self._saveArgFile.value
 		except Exception as err:
 			self._configTextArea.__add__('\'Generate\' error: ' + repr(err))
-			self._configTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._configTextArea.__add__(traceback.format_exc())
 
 	def __buttonAction_Combine(self):
 		try:
@@ -321,4 +331,10 @@ class LibMaster(BaseWidget):
 			self._combineTextArea.__add__('New DPU file is generated.')
 		except Exception as err:
 			self._combineTextArea.__add__('Error: ' + repr(err))
-			self._combineTextArea.__add__(traceback.format_exc())
+			if self.debug:
+				self._combineTextArea.__add__(traceback.format_exc())
+
+class LibMasterDebug(LibMaster):
+	def __init__(self):
+		super(LibMasterDebug, self).__init__()
+		self.debug = True
