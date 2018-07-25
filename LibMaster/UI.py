@@ -67,8 +67,8 @@ class ControlFileSave(ControlFile):
 			self.value = value if value[-1 - len(self.saved_file_type):] == '.' + self.saved_file_type else value + '.' + self.saved_file_type
 
 class LibMaster(BaseWidget):
-	def __init__(self):
-		super(LibMaster, self).__init__('LibMaster')
+	def __init__(self, title='LibMaster'):
+		super(LibMaster, self).__init__(title)
 		self.debug = False
 		#Import controls
 		self._openImportFile	= None
@@ -336,5 +336,5 @@ class LibMaster(BaseWidget):
 
 class LibMasterDebug(LibMaster):
 	def __init__(self):
-		super(LibMasterDebug, self).__init__()
+		super(LibMasterDebug, self).__init__('LibMaster - Debug')
 		self.debug = True
