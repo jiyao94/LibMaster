@@ -14,7 +14,7 @@ pip install -r requirements.txt
 Now you have finished environment setup. You can go to LibMaster folder and run `LibMaster.py` for tool with graphic UI, or run `Import.py`, `Config.py`, `Combine.py` for each part of the tool separately with command line.
 
 ### Debug mode
-
+All scripts support debug mode, which will print traceback messages when exception occurs. Simply add `--debug` option after the script.
 
 ### Packaging stand alone execution file for Windows
 On Windows platform, we also provide methods to run this tool without python environment. In the `requirements-win.txt` you will install two packaging tools: [Pyinstaller](http://www.pyinstaller.org/) and [cx-Freeze](http://cx-freeze.sourceforge.net/). They can package python environment into into one single execution file or a folder contains all dependencies. For detailed usage for these tools, please refer to their websites.
@@ -74,5 +74,3 @@ Function_Block_Name
 ...
 ```
 We use `P` to represent parameter and `I` to represent input variable. The number after is the order of the parameter or input variable appears in the parameter or input line in the DPU configuration file, separated by comma. Then, after a space is the parameter or input variable name. Tab also works to separate name and order. Empty line will not affect, but it's better to use empty lines to separate different function blocks to make the file more readable.
-
-## For developers
